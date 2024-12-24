@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">Finance Tracker</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/account">Account</a></li>
+                    <li class="nav-item"><a class="btn btn-primary nav-link text-white" href="/home">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Transactions Content -->
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Transaction History</h2>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-primary">Add Transaction</button>
+            <select class="form-select w-25">
+                <option value="">Sort by...</option>
+                <option value="date">Date</option>
+                <option value="type">Type</option>
+            </select>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2024-12-20</td>
+                    <td>Income</td>
+                    <td>$500</td>
+                    <td>Salary</td>
+                </tr>
+                <tr>
+                    <td>2024-12-21</td>
+                    <td>Expense</td>
+                    <td>$100</td>
+                    <td>Groceries</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
