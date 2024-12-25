@@ -16,7 +16,6 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="/account">Account</a></li>
-                    <li class="nav-item"><a class="btn btn-primary nav-link text-white" href="/home">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -49,5 +48,12 @@
             </div>
         </div>
     </div>
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('You must be logged in to access this page.');
+            window.location.href = '/login';
+        }
+    </script>    
 </body>
 </html>
