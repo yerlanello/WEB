@@ -11,7 +11,7 @@
     <div class="container py-5">
         <h2 class="text-center mb-4">Login</h2>
         <div class="card mx-auto p-4 shadow" style="max-width: 400px;">
-            <form action="dashboard.html">
+            <form action="/dashboard">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
@@ -23,9 +23,36 @@
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>
-                <p class="text-center mt-3">Don't have an account? <a href="register.html">Register</a></p>
+                <p class="text-center mt-3">Don't have an account? <a href="/register">Register</a></p>
             </form>
         </div>
     </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            const email = document.querySelector('#email').value;
+            const password = document.querySelector('#password').value;
+    
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+    
+                const data = await res.json();
+    
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    window.location.href = '/dashboard';
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                alert('An error occurred');
+            }
+        });
+    </script>
 </body>
 </html>
