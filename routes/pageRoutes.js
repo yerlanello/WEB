@@ -4,7 +4,7 @@ const path = require('path');
 
 // Routes for HTML pages
 router.get('/', (req, res) => {
-    res.router(path.join(path.dirname(__dirname), 'public', 'home.html'));
+    res.sendFile(path.join(path.dirname(__dirname), 'public', 'home.html'));
 });
 
 router.get('/login', (req, res) => {
