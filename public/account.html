@@ -18,7 +18,9 @@
                     <li class="nav-item"><a class="nav-link" href="/budgeting">Budgeting</a></li>
                     <li class="nav-item"><a class="nav-link" href="/transactions">Transactions</a></li>
                     <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
-                    <li class="nav-item"><a class="btn btn-primary nav-link text-white" href="/home">Logout</a></li>
+                    <li id="logout" class="nav-item">
+                        <a class="btn btn-danger nav-link text-white" href="#">Logout</a>
+                    </li>                                       
                 </ul>
             </div>
         </div>
@@ -47,5 +49,20 @@
             </form>
         </div>
     </div>
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('You must be logged in to access this page.');
+            window.location.href = '/login';
+        }
+    
+        document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+
+        localStorage.removeItem('token');
+
+        window.location.href = '/login';
+    });
+    </script>
 </body>
 </html>
