@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const JWT_SECRET = 'your_jwt_secret'; // Move this to a config file in production
+const JWT_SECRET = 'your_secret_key'; // Move this to a config file in production
 
 // Registration function
 const registerUser  = async (req, res) => {
