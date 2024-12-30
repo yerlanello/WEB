@@ -1,17 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
+const authenticate = require('../middleware/authMiddleware');
 
 // GET all transactions
-router.get('/', transactionController.getTransactions);
+router.get('/', authenticate, transactionController.getTransactions);
 
 // POST a new transaction
-router.post('/', transactionController.createTransaction);
+router.post('/', authenticate, transactionController.createTransaction);
 
 // PUT update a transaction
-router.put('/:id', transactionController.updateTransaction);
+router.put('/:id', authenticate, transactionController.updateTransaction);
 
 // DELETE a transaction
-router.delete('/:id', transactionController.deleteTransaction);
-    
+router.delete('/:id', authenticate, transactionController.deleteTransaction);
+
 module.exports = router;
