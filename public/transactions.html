@@ -103,11 +103,11 @@
         const saveTransactionBtn = document.getElementById('saveTransactionBtn');
         const transactionForm = document.getElementById('transactionForm');
         const transactionModal = document.getElementById('transactionModal');
+
         let isEdit = false;
 
         // Fetch transactions on load
         document.addEventListener('DOMContentLoaded', fetchTransactions);
-        
         transactionModal.addEventListener('hidden.bs.modal', () => {
             document.getElementById('transactionDescription').value = '';
             document.getElementById('transactionAmount').value = '';
@@ -184,6 +184,7 @@
             } catch (error) {
                 console.error(error);
                 alert('Error saving transaction');
+
             }
         });
 
