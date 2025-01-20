@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+require("dotenv").config();
 
-const JWT_SECRET = 'your_secret_key'; // Use environment variables in production
-
+const JWT_SECRET = process.env.JWT_SECRET; 
 
 const authenticate = async (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];

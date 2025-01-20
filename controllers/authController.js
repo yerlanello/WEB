@@ -1,8 +1,9 @@
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+require("dotenv").config();
 
-const JWT_SECRET = 'your_secret_key'; // Move this to a config file in production
+const JWT_SECRET = process.env.JWT_SECRET
 
 // Registration function
 const registerUser  = async (req, res) => {
