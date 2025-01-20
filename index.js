@@ -5,7 +5,8 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const pageRoutes = require("./routes/pageRoutes");
 const authRoutes = require("./routes/authRoutes");
 const path = require('path');
-
+require("dotenv").config()
+const MongoDbCollection_CONNECTION_URL = process.env.MongoDbCollection_CONNECTION_URL
 const app = express();
 
 // Middleware to parse JSON bodies
@@ -14,7 +15,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB connection
-mongoose.connect('mongodb://127.0.0.1:27017/finance-tracker')
+mongoose.connect(MongoDbCollection_CONNECTION_URL)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
