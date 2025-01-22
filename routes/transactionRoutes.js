@@ -15,4 +15,6 @@ router.put('/:id', authenticate, transactionController.updateTransaction);
 // DELETE a transaction
 router.delete('/:id', authenticate, transactionController.deleteTransaction);
 
+router.get('/statistics', authenticate, transactionController.getStatistics);
+
 module.exports = router;

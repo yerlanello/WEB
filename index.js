@@ -4,9 +4,13 @@ const bodyParser = require('body-parser');
 const transactionRoutes = require('./routes/transactionRoutes');
 const pageRoutes = require("./routes/pageRoutes");
 const authRoutes = require("./routes/authRoutes");
+const budgetRoutes = require("./routes/budgetRoutes");
 const path = require('path');
+
 require("dotenv").config()
 const MongoDbCollection_CONNECTION_URL = process.env.MongoDbCollection_CONNECTION_URL
+const PORT = process.env.PORT
+
 const app = express();
 
 // Middleware to parse JSON bodies
@@ -21,6 +25,7 @@ mongoose.connect(MongoDbCollection_CONNECTION_URL)
 
 // Routes
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/budgets', budgetRoutes)
 app.use('/', pageRoutes);
 app.use('/api/auth', authRoutes);
 
@@ -31,7 +36,6 @@ app.use((req, res) => {
 });
 
 // Start server
-const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

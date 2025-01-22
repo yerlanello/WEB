@@ -29,7 +29,6 @@ const createTransaction = async (req, res) => {
     res.status(500).json({ message: 'Error creating transaction', error: err });
   }
 };
-
 // Other methods (updateTransaction, deleteTransaction) remain similar but should verify ownership
 const updateTransaction = async (req, res) => {
   const { id } = req.params;
@@ -68,9 +67,49 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
+const getStatistics = async (req, res) => {
+  const lastMonth = new Date();
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+  try {
+    const transactions = await Transaction.find({ userId: req.user._id, date: { $gte: lastMonth } });
+    const totalIncome = transactions
+      .filter(t => t.type === 'income')
+      .reduce((acc, t) => acc + t.amount, 0);
+    const totalExpenses = transactions
+      .filter(t => t.type === 'expense')
+      .reduce((acc, t) => acc + t.amount, 0);
+
+    const categoryExpenses = transactions
+      .filter(t => t.type === 'expense')
+      .reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
+        return acc;
+      }, {});
+
+    const categoryIncome = transactions
+      .filter(t => t.type === 'income')
+      .reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
+        return acc;
+      }, {});
+
+    res.status(200).json({
+      totalIncome,
+      totalExpenses,
+      categoryExpenses,
+      categoryIncome
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error calculating statistics', error: err });
+  }
+};
+
+
 module.exports = {
   getTransactions,
   createTransaction,
   updateTransaction,
   deleteTransaction,
+  getStatistics,
 };
