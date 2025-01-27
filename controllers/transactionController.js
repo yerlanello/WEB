@@ -67,7 +67,20 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
-const getStatistics = async (req, res) => {
+const getTransactionsInRange = async (req, res) => {
+  
+  const { startDate, endDate } = req.body;
+
+  try {
+    const transactions = await Transaction.find({
+      userId: req.user._id,
+      date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+    });
+    res.status(200).json(transactions);
+  } catch (err) {
+    res.status(500).json({ message: 'Error calculating transactions in some specific range', error: err.message });
+  }
+  /*
   const lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
 
@@ -102,7 +115,7 @@ const getStatistics = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: 'Error calculating statistics', error: err });
-  }
+  }*/
 };
 
 
@@ -111,5 +124,5 @@ module.exports = {
   createTransaction,
   updateTransaction,
   deleteTransaction,
-  getStatistics,
+  getTransactionsInRange,
 };
