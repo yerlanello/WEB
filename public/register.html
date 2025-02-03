@@ -6,27 +6,38 @@
     <title>Register</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container py-5">
         <h2 class="text-center mb-4">Register</h2>
         <div class="card mx-auto p-4 shadow" style="max-width: 400px;">
-            <form action="/dashboard">
+            <form id="register-form">
                 <div class="mb-3">
                     <label for="name" class="form-label">Full Name</label>
                     <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+                    <div id="name-error" class="error-message"></div>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    <div id="email-error" class="error-message"></div>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" placeholder="Create a password" required>
+                    <div id="password-error" class="error-message"></div>
                 </div>
                 <div class="mb-3">
                     <label for="confirm-password" class="form-label">Confirm Password</label>
                     <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password" required>
+                    <div id="confirm-password-error" class="error-message"></div>
                 </div>
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary">Register</button>
@@ -36,36 +47,90 @@
         </div>
     </div>
     <script>
-        document.querySelector('form').addEventListener('submit', async (e) => {
+        document.querySelector('#register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-    
-            const name = document.querySelector('#name').value;
-            const email = document.querySelector('#email').value;
-            const password = document.querySelector('#password').value;
-            const confirmPassword = document.querySelector('#confirm-password').value;
-    
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
+
+            const nameField = document.querySelector('#name');
+            const emailField = document.querySelector('#email');
+            const passwordField = document.querySelector('#password');
+            const confirmPasswordField = document.querySelector('#confirm-password');
+
+            const nameError = document.querySelector('#name-error');
+            const emailError = document.querySelector('#email-error');
+            const passwordError = document.querySelector('#password-error');
+            const confirmPasswordError = document.querySelector('#confirm-password-error');
+
+            // Clear previous errors
+            nameError.textContent = '';
+            emailError.textContent = '';
+            passwordError.textContent = '';
+            confirmPasswordError.textContent = '';
+
+            const name = nameField.value;
+            const email = emailField.value;
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+
+            let hasError = false;
+
+            if (!name.trim()) {
+                nameError.textContent = 'Full name is required.';
+                hasError = true;
             }
-    
+
+            if (!email.trim()) {
+                emailError.textContent = 'Email is required.';
+                hasError = true;
+            }
+
+            if (!password.trim()) {
+                passwordError.textContent = 'Password is required.';
+                hasError = true;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters long.';
+                hasError = true;
+            } else if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+                passwordError.textContent = 'Password must contain both letters and numbers.';
+                hasError = true;
+            }
+
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = 'Passwords do not match.';
+                hasError = true;
+            }
+
+            if (hasError) return;
+
             try {
                 const res = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, password }),
                 });
-    
+
                 const data = await res.json();
     
+            
                 if (data.ok) {
                     alert('Registration successful! Please log in.');
                     window.location.href = '/login';
                 } else {
-                    alert(data.message || 'Registration failed');
+                    if (data.errors) {
+                        if (data.errors.name) {
+                            nameError.textContent = data.errors.name;
+                        }
+                        if (data.errors.email) {
+                            emailError.textContent = data.errors.email;
+                        }
+                        if (data.errors.password) {
+                            passwordError.textContent = data.errors.password;
+                        }
+                    } else {
+                        passwordError.textContent = data.message || 'Registration failed';
+                    }
                 }
             } catch (error) {
-                alert('An error occurred');
+                passwordError.textContent = 'An unexpected error occurred';
             }
         });
     </script>    

@@ -7,6 +7,14 @@
     <title>Transactions</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1055;
+        }
+    </style>
 </head>
 
 <body>
@@ -31,8 +39,7 @@
     <div class="container py-5">
         <h2 class="text-center mb-4">Transaction History</h2>
         <div class="d-flex justify-content-between mb-3">
-            <button class="btn btn-primary" id="addTransactionBtn" data-bs-toggle="modal"
-                data-bs-target="#transactionModal">Add Transaction</button>
+            <button class="btn btn-primary" id="addTransactionBtn" data-bs-toggle="modal" data-bs-target="#transactionModal">Add Transaction</button>
             <select class="form-select w-25" id="sortBy">
                 <option value="">Sort by...</option>
                 <option value="date">Date</option>
@@ -54,9 +61,11 @@
         </table>
     </div>
 
+    <!-- Toast Notification Container -->
+    <div class="toast-container"></div>
+
     <!-- Modal -->
-    <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -102,7 +111,7 @@
         const saveTransactionBtn = document.getElementById('saveTransactionBtn');
         const transactionForm = document.getElementById('transactionForm');
         const transactionModal = document.getElementById('transactionModal');
-
+        const toastContainer = document.querySelector('.toast-container');
         let isEdit = false;
 
         // Fetch transactions on load
@@ -116,6 +125,48 @@
             isEdit = false; // Reset the edit flag
         });
 
+        // Show Toast Notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0 show`;
+            toast.style.minWidth = '200px';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+                // Обработчик сортировки
+        document.getElementById('sortBy').addEventListener('change', (event) => {
+            const sortValue = event.target.value;
+            if (sortValue) {
+                sortTransactions(sortValue);
+            }
+        });
+
+        // Функция сортировки транзакций
+        function sortTransactions(criteria) {
+            const rows = Array.from(transactionTableBody.querySelectorAll('tr'));
+
+            rows.sort((a, b) => {
+                const aValue = a.querySelector(`td:nth-child(${criteria === 'date' ? 5 : 1})`).textContent;
+                const bValue = b.querySelector(`td:nth-child(${criteria === 'date' ? 5 : 1})`).textContent;
+
+                if (criteria === 'date') {
+                    return new Date(aValue) - new Date(bValue);
+                } else if (criteria === 'type') {
+                    return aValue.localeCompare(bValue);
+                }
+            });
+
+            transactionTableBody.innerHTML = '';
+            rows.forEach(row => transactionTableBody.appendChild(row));
+        }
+
         // Fetch and display transactions
         async function fetchTransactions() {
             try {
@@ -127,7 +178,7 @@
                 renderTransactions(transactions);
             } catch (error) {
                 console.error(error);
-                alert('Error fetching transactions');
+                showToast('Error fetching transactions', 'danger');
             }
         }
 
@@ -161,7 +212,7 @@
             const id = document.getElementById('transactionId').value;
 
             if (!description || isNaN(amount) || !category || !type) {
-                alert('Please fill all fields');
+                showToast('Please fill all fields', 'warning');
                 return;
             }
 
@@ -181,35 +232,28 @@
                 bootstrap.Modal.getInstance(document.getElementById('transactionModal')).hide();
             } catch (error) {
                 console.error(error);
-                alert('Error saving transaction');
-
+                showToast('Error saving transaction', 'danger');
             }
         });
 
         // Open modal for editing transaction
         async function openEditModal(button) {
-            // Get the parent row of the button clicked
             const row = button.closest('tr');
-
-            // Extract transaction details from the row's data attributes
             const id = row.getAttribute('data-id');
             const description = row.getAttribute('data-description');
             const amount = parseFloat(row.getAttribute('data-amount'));
             const category = row.getAttribute('data-category');
             const type = row.getAttribute('data-type');
-
-            // Populate the modal fields with the transaction data
             document.getElementById('transactionDescription').value = description;
             document.getElementById('transactionAmount').value = amount;
             document.getElementById('transactionCategory').value = category;
             document.getElementById('transactionType').value = type;
-            document.getElementById('transactionId').value = id; // Store the ID for later use
-            isEdit = true; // Set the edit flag to true
-
-            // Show the modal
+            document.getElementById('transactionId').value = id;
+            isEdit = true;
             const modal = new bootstrap.Modal(document.getElementById('transactionModal'));
             modal.show();
         }
+
         // Delete a transaction
         async function deleteTransaction(id) {
             if (!confirm('Are you sure you want to delete this transaction?')) return;
@@ -217,12 +261,12 @@
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE',
                 });
-                console.log(response);
                 if (!response.ok) throw new Error('Failed to delete transaction');
+                showToast('Transaction successfully deleted', 'success'); 
                 fetchTransactions();
             } catch (error) {
-                console.error(error);
-                alert('Error deleting transaction');
+                console.error(error);    
+                showToast('Error deleting transaction', 'danger');
             }
         }
     </script>
