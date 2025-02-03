@@ -81,8 +81,7 @@
     <!-- Script Section -->
     <script>
         const API_URL_BUDGETS = '/api/budgets';
-        const API_URL_STATISTICS = '/api/transactions';
-        const AUTH_TOKEN = localStorage.getItem('token');
+        const API_URL_STATISTICS = '/api/transactions/inRange';
         const budgetTableBody = document.getElementById('budgetTableBody');
         const statisticsDiv = document.getElementById('statistics');
 
@@ -97,7 +96,7 @@
             try {
                 
                 const response = await fetch(API_URL_BUDGETS, {
-                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                    method: 'GET',
                 });
                 const budgets = await response.json();
                 renderBudgets(budgets);
@@ -125,8 +124,17 @@
             try {
                 const lastMonth = new Date();
                 lastMonth.setMonth(lastMonth.getMonth() - 1);
-
-                const transactions = await getTransactionsInRange(lastMonth, new Date(), AUTH_TOKEN);
+                const response = await fetch(API_URL_STATISTICS, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    body: JSON.stringify({
+                        "startDate": lastMonth,
+                        "endDate": new Date(),
+                    })
+                });
+                transactions = await response.json();
                 stats = processTransactions(transactions);
                 renderStatistics(stats);
             } catch (error) {
@@ -170,9 +178,7 @@
             try {
                 await fetch(API_URL_BUDGETS, {
                     method: 'POST',
-
                     headers: {
-                        'Authorization': `Bearer ${AUTH_TOKEN}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ category, limit })

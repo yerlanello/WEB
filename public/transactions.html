@@ -98,7 +98,6 @@
     <!-- Script Section -->
     <script>
         const API_URL = '/api/transactions';
-        const AUTH_TOKEN = localStorage.getItem('token');
         const transactionTableBody = document.getElementById('transactionTableBody');
         const saveTransactionBtn = document.getElementById('saveTransactionBtn');
         const transactionForm = document.getElementById('transactionForm');
@@ -121,7 +120,7 @@
         async function fetchTransactions() {
             try {
                 const response = await fetch(API_URL, {
-                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` },
+                    method: 'GET',
                 });
                 if (!response.ok) throw new Error('Failed to fetch transactions');
                 const transactions = await response.json();
@@ -173,7 +172,6 @@
                 const response = await fetch(endpoint, {
                     method,
                     headers: {
-                        'Authorization': `Bearer ${AUTH_TOKEN}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(transaction)
@@ -218,7 +216,6 @@
             try {
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
                 });
                 console.log(response);
                 if (!response.ok) throw new Error('Failed to delete transaction');

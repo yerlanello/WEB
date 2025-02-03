@@ -68,9 +68,7 @@ const deleteTransaction = async (req, res) => {
 };
 
 const getTransactionsInRange = async (req, res) => {
-  
   const { startDate, endDate } = req.body;
-
   try {
     const transactions = await Transaction.find({
       userId: req.user._id,

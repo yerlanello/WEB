@@ -1,7 +1,7 @@
 // authRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
-const { registerUser , loginUser  } = require('../controllers/authController'); // Import the functions
+const { registerUser , loginUser , logoutUser} = require('../controllers/authController'); // Import the functions
 
 const router = express.Router();
 
@@ -24,6 +24,11 @@ router.post(
         body('password', 'Password is required').exists(),
     ],
     loginUser  // Use the imported function
+);
+
+router.post(
+    '/logout',
+    logoutUser
 );
 
 module.exports = router;

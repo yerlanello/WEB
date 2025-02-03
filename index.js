@@ -5,6 +5,7 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const pageRoutes = require("./routes/pageRoutes");
 const authRoutes = require("./routes/authRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
+const cookieParser = require("cookie-parser");
 const path = require('path');
 
 require("dotenv").config()
@@ -15,6 +16,7 @@ const app = express();
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
+app.use(cookieParser());
 // Middleware to serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 

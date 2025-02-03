@@ -15,6 +15,7 @@ router.put('/:id', authenticate, transactionController.updateTransaction);
 // DELETE a transaction
 router.delete('/:id', authenticate, transactionController.deleteTransaction);
 
+// POST range and Get transactions in that specific range 
 router.post('/inRange', authenticate, transactionController.getTransactionsInRange);
 
 module.exports = router;

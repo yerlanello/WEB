@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const authenticate = require('../middleware/authMiddleware');
 
 // Routes for HTML pages
 router.get('/', (req, res) => {
@@ -15,23 +16,23 @@ router.get('/register', (req, res) => {
     res.sendFile(path.join(path.dirname(__dirname), 'public', 'register.html'));
 });
 
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', authenticate, (req, res) => {
     res.sendFile(path.join(path.dirname(__dirname), 'public', 'dashboard.html'));
 });
 
-router.get('/transactions', (req, res) => {
+router.get('/transactions', authenticate, (req, res) => {
     res.sendFile(path.join(path.dirname(__dirname), 'public', 'transactions.html'));
 });
 
-router.get('/budgeting', (req, res) => {
+router.get('/budgeting', authenticate, (req, res) => {
     res.sendFile(path.join(path.dirname(__dirname), 'public', 'budgeting.html'));
 });
 
-router.get('/reports', (req, res) => {
+router.get('/reports', authenticate, (req, res) => {
     res.sendFile(path.join(path.dirname(__dirname), 'public', 'reports.html'));
 });
 
-router.get('/account', (req, res) => {
+router.get('/account', authenticate, (req, res) => {
     res.sendFile(path.join(path.dirname(__dirname), 'public', 'account.html'));
 });
 
