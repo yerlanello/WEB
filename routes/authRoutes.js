@@ -1,7 +1,7 @@
 // authRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
-const { registerUser , loginUser , logoutUser} = require('../controllers/authController'); // Import the functions
+const { registerUser , loginUser , logoutUser , refreshUser } = require('../controllers/authController'); // Import the functions
 
 const router = express.Router();
 
@@ -29,6 +29,11 @@ router.post(
 router.post(
     '/logout',
     logoutUser
+);
+
+router.get(
+    '/refresh',
+    refreshUser
 );
 
 module.exports = router;

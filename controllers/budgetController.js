@@ -3,7 +3,7 @@ const Budget = require('../models/budget');
 // Create a new budget limit
 const createBudget = async (req, res) => {
   const { category, limit } = req.body;
-  const newBudget = new Budget({ userId: req.user._id, category, limit });
+  const newBudget = new Budget({ userId: req.user.id, category, limit });
 
   try {
     await newBudget.save();
@@ -16,7 +16,7 @@ const createBudget = async (req, res) => {
 // Get all budget limits for the authenticated user
 const getBudgets = async (req, res) => {
   try {
-    const budgets = await Budget.find({ userId: req.user._id });
+    const budgets = await Budget.find({ userId: req.user.id });
     res.status(200).json(budgets);
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving budget limits', error: err });
@@ -30,7 +30,7 @@ const updateBudget = async (req, res) => {
 
   try {
     const updatedBudget = await Budget.findOneAndUpdate(
-      { _id: id, userId: req.user._id },
+      { _id: id, userId: req.user.id },
       { category, limit },
       { new: true }
     );
@@ -50,7 +50,7 @@ const deleteBudget = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const deletedBudget = await Budget.findOneAndDelete({ _id: id, userId: req.user._id });
+    const deletedBudget = await Budget.findOneAndDelete({ _id: id, userId: req.user.id });
 
     if (!deletedBudget) {
       return res.status(404).json({ message: 'Budget limit not found or unauthorized' });

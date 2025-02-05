@@ -3,7 +3,8 @@ const Transaction = require('../models/transaction');
 // GET all transactions for the authenticated user
 const getTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find({ userId: req.user._id });
+    
+    const transactions = await Transaction.find({ userId: req.user.id });
     res.status(200).json(transactions);
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving transactions', error: err });
@@ -19,7 +20,7 @@ const createTransaction = async (req, res) => {
     amount,
     type,
     category,
-    userId: req.user._id,
+    userId: req.user.id,
   });
 
   try {
@@ -36,7 +37,7 @@ const updateTransaction = async (req, res) => {
 
   try {
     const transaction = await Transaction.findOneAndUpdate(
-      { _id: id, userId: req.user._id }, // Ensure the user owns the transaction
+      { _id: id, userId: req.user.id }, // Ensure the user owns the transaction
       { description, amount, type, category },
       { new: true }
     );
@@ -55,7 +56,7 @@ const deleteTransaction = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const transaction = await Transaction.findOneAndDelete({ _id: id, userId: req.user._id });
+    const transaction = await Transaction.findOneAndDelete({ _id: id, userId: req.user.id });
 
     if (!transaction) {
       return res.status(404).json({ message: 'Transaction not found or unauthorized' });
@@ -71,7 +72,7 @@ const getTransactionsInRange = async (req, res) => {
   const { startDate, endDate } = req.body;
   try {
     const transactions = await Transaction.find({
-      userId: req.user._id,
+      userId: req.user.id,
       date: { $gte: new Date(startDate), $lte: new Date(endDate) }
     });
     res.status(200).json(transactions);
