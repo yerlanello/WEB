@@ -8,9 +8,11 @@ const budgetRoutes = require("./routes/budgetRoutes");
 const cookieParser = require("cookie-parser");
 const path = require('path');
 
-require("dotenv").config()
-const MongoDbCollection_CONNECTION_URL = process.env.MongoDbCollection_CONNECTION_URL
-const PORT = process.env.PORT
+require("dotenv").config();
+
+const MongoDbCollection_CONNECTION_URL = process.env.MongoDbCollection_CONNECTION_URL;
+const PORT = process.env.PORT;
+const API_URL = process.env.API_URL;
 
 const app = express();
 
@@ -39,5 +41,5 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on ${API_URL}`);
 });

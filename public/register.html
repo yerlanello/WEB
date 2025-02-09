@@ -112,7 +112,7 @@
     
             
                 if (data.ok) {
-                    alert('Registration successful! Please log in.');
+                    alert(data.message);
                     window.location.href = '/login';
                 } else {
                     if (data.errors) {

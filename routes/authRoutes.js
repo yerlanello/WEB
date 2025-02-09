@@ -1,7 +1,7 @@
 // authRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
-const { registerUser , loginUser , logoutUser , refreshUser } = require('../controllers/authController'); // Import the functions
+const { registerUser , loginUser , logoutUser , refreshUser , activateUser} = require('../controllers/authController'); // Import the functions
 
 const router = express.Router();
 
@@ -34,6 +34,11 @@ router.post(
 router.get(
     '/refresh',
     refreshUser
+);
+
+router.get(
+    '/activate/:link',
+    activateUser
 );
 
 module.exports = router;

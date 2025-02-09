@@ -1,10 +1,12 @@
 const { validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const Token = require('../models/token');
 const {generateTokens, saveToken, removeToken, findToken, validateAccessToken, validateRefreshToken} = require('../controllers/tokenController');
-const user = require('../models/user');
+const uuid = require('uuid');
+const mailController = require('../controllers/mailController');
 require("dotenv").config();
+
+const API_URL = process.env.API_URL;
+
 
 // Registration function
 const registerUser = async (req, res) => {
@@ -20,21 +22,41 @@ const registerUser = async (req, res) => {
         if (userExists) {
             return res.status(400).json({ message: 'User  already exists' });
         }
-        
-        const user = new User({ name, email, password });
+
+        const activationLink = uuid.v4();
+        const user = new User({ name, email, password, activationLink});
         await user.save();
+        await mailController.sendActivationMail(email, `${API_URL}/api/auth/activate/${activationLink}`);
         
         const tokens = generateTokens({ id: user._id });
         await saveToken(user._id, tokens.refreshToken);
 
-        res.cookie('refreshToken', tokens.refreshToken, {httpOnly: true})
-        
-        res.status(200).json({ok: true});
+        res.cookie('refreshToken', tokens.refreshToken, {httpOnly: true});
+        res.status(200).json({ok: true, message: 'Activation link is sent to your email, please activate your account!'});
     } catch (error) {
         
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+const activateUser = async (req, res) => {
+    try{
+        const activationLink = req.params.link;
+
+        const user = await User.findOne({activationLink});
+        if (!user) {
+            res.status(400).json({ message: 'Activation link is invalid' });
+        }
+
+        user.isActivated = true;
+        await user.save();
+
+        const loginPageUrl = `${API_URL}/login?activation=success`;
+        res.redirect(loginPageUrl);
+    } catch (error) {
+        res.status(400).json(error.message);
+    }
+}
 
 // Login function
 const loginUser = async (req, res) => {
@@ -51,6 +73,11 @@ const loginUser = async (req, res) => {
         if (!user || !(await user.matchPassword(password))) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+
+        if(!user.isActivated){
+            return res.status(400).json({ message: 'User account is not activated, please activate you account via link sent to your email!' });
+        }
+
         const tokens = generateTokens({ id: user._id });
         await saveToken(user._id, tokens.refreshToken);
         res.cookie('refreshToken', tokens.refreshToken, {httpOnly: true})
@@ -111,4 +138,5 @@ module.exports = {
     loginUser ,
     logoutUser ,
     refreshUser ,
+    activateUser ,
 };
