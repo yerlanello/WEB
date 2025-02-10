@@ -110,7 +110,7 @@ const refreshUser = async (req, res) => {
         res.cookie('accessToken', userData.accessToken, {httpOnly: true});
         res.status(202).json({ok: true, user: userData});        
     } catch(error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: error.message});
     }
 };
 

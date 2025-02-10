@@ -36,7 +36,7 @@ app.use('/api/auth', authRoutes);
 
 // Error Handling
 app.use((req, res) => {
-    res.status(404).json({ error: "Route not found" });
+  res.status(404).sendFile(path.join(__dirname, 'public', 'notFound.html'));
 });
 
 // Start server

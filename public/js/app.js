@@ -26,6 +26,7 @@ const checkAuth = async () => {
         const response = await fetch('/api/auth/refresh', {
             method: 'GET'
         });
+        console.log(response);
         if (response.ok) {
                         
         } else {
